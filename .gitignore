@@ -1,2 +1,8 @@
-venv/
+### JetBrains
 .idea/
+
+### Python
+__pycache__/
+
+### Virtualenv
+venv/
