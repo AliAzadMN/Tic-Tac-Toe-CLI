@@ -4,7 +4,6 @@ from termcolor import colored
 import os
 import time
 
-init()
 
 MODES = (
     (1, 2, 3), (1, 4, 7), (1, 5, 9), (2, 5, 8),
@@ -15,6 +14,7 @@ win_mode = list()
 
 
 def start():
+    # TODO 0. Change board type to the list
     board = {
         7: 7, 8: 8, 9: 9,
         4: 4, 5: 5, 6: 6,
@@ -26,24 +26,32 @@ def start():
     ask_question()
 
 
-def get_game_mode():
+def get_game_mode() -> int:
+    """ Get game mode from user """
+
     while True:
-        print('Game Modes: \n1. single \n2. multiplayer')
+        print("""
+Game modes:
+
+    1. Play with Robot 
+    2. Play with Each Other 
+        """)
+
         try:
-            game_mode = int(input('Enter the Number: '))
-            if game_mode == 1:
-                return 'single'
-            elif game_mode == 2:
-                return 'multiplayer'
+            game_mode = int(input('    Enter the Number: '))
+
+            if game_mode in [1, 2]:
+                return game_mode
             print('Please Enter Number [1,2]')
 
         except ValueError:
             print('Invalid input! Please Try Again.')
+
         print()
 
 
 def run_game(game_mode, board):
-    if game_mode == 'single':
+    if game_mode == 'single':  # TODO 3. Change single to 1
         user_turn, os_turn = set_turn()
     else:
         user_turn, os_turn = 'X', 'O'
@@ -81,7 +89,7 @@ def set_turn():
 def show_board(board):
     os.system('cls')
     for number in board:
-        if number in win_mode:
+        if number in win_mode:  # TODO 1. Using index of list items
             text_color = 'blue'
         elif board[number] == 'X':
             text_color = 'red'
@@ -89,7 +97,7 @@ def show_board(board):
             text_color = 'green'
         else:
             text_color = None
-
+        # TODO 2. ِDifferent forms(ways) of use colored in termcolor
         print(colored(str(board[number]), text_color, attrs=['bold']), '' if number % 3 == 0 else '|', end='', sep='')
         if number % 3 == 0:
             print()
@@ -208,4 +216,8 @@ def ask_question():
 
 if __name__ == "__main__":
     # This code won't run if this file is imported
+
+    # To make the ANSI colors used in termcolor work with Windows terminal
+    init()
+
     start()
