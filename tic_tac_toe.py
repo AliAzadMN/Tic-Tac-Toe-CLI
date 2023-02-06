@@ -4,12 +4,10 @@ from termcolor import colored
 import os
 import time
 
-
 MODES = (
     (1, 2, 3), (1, 4, 7), (1, 5, 9), (2, 5, 8),
     (3, 6, 9), (3, 5, 7), (4, 5, 6), (7, 8, 9),
 )
-COLOR = {'X': 'red', 'O': 'green'}
 
 
 def start():
@@ -59,18 +57,20 @@ def run_game(game_mode, board):
 
     turn = user_turn
     win_comb = []
+    colors = {'X': 'red', 'O': 'green'}
 
     for step in range(1, 10):
         show_board(win_comb, board)
 
-        if game_mode == 1:
-            run_robot(turn, user_turn, os_turn, board)
+        if game_mode == 1 and turn == os_turn:
+            os_number = run_robot(user_turn, os_turn, board)
+            board[os_number] = turn
 
         else:
-            user_number = get_user_number(turn, board)
+            user_number = get_user_number(turn, colors, board)
             board[user_number] = turn
 
-        if check_end_game(step, game_mode, turn, os_turn, win_comb, board):
+        if check_end_game(step, game_mode, turn, os_turn, win_comb, colors, board):
             break
 
         turn = os_turn if turn == user_turn else user_turn
@@ -106,28 +106,25 @@ def show_board(win_comb, board):
             print()
 
 
-def run_robot(turn, user_turn, os_turn, board):
-    if turn == user_turn:
-        user_number = get_user_number(turn, board)
-        board[user_number] = turn
-    else:
-        print('robot is thinking...')
-        time.sleep(3)
+def run_robot(user_turn, os_turn, board) -> int:
+    """ Find the best location for Robot """
 
-        for element in (os_turn, user_turn):
-            os_number = try_win_self_or_lose_user(element, board)
-            if os_number:
-                board[os_number] = turn
-                return
+    print('\n    Robot is Thinking...')
+    time.sleep(3)
 
-        random_number = set_random_number(board)
-        board[random_number] = turn
+    for element in (os_turn, user_turn):
+        os_number = try_win_self_or_lose_user(element, board)
+
+        if os_number:
+            return os_number
+
+    return set_random_number(board)
 
 
-def get_user_number(turn, board):
+def get_user_number(turn, colors, board):
     while True:
         try:
-            print(f"{colored(turn, COLOR[turn], attrs=['bold'])} move? ", end='')
+            print(f"{colored(turn, colors[turn], attrs=['bold'])} move? ", end='')
             user_number = int(input())
             if type(board[user_number]) == int:
                 return user_number
@@ -158,7 +155,7 @@ def set_random_number(board):
             return random_number
 
 
-def check_end_game(step, game_mode, turn, os_turn, win_comb, board):
+def check_end_game(step, game_mode, turn, os_turn, win_comb, colors, board):
     result = end_game(step, board)
     if result in [True, False]:
         win_comb.extend(find_out_win_comb(turn, board))
@@ -170,7 +167,7 @@ def check_end_game(step, game_mode, turn, os_turn, win_comb, board):
                     if turn == os_turn else f"{colored('user is won', 'blue', attrs=['bold'])}"
                 )
             else:
-                print(colored(turn, COLOR[turn], attrs=['bold']), colored('is won', 'blue', attrs=['bold']))
+                print(colored(turn, colors[turn], attrs=['bold']), colored('is won', 'blue', attrs=['bold']))
         else:
             print(f"{colored('Tie', 'magenta')}")
 
