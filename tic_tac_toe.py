@@ -14,12 +14,14 @@ win_mode = list()
 
 
 def start():
-    # TODO 0. Change board type to the list
+    # TODO 0. Update
+
     board = {
         7: 7, 8: 8, 9: 9,
         4: 4, 5: 5, 6: 6,
         1: 1, 2: 2, 3: 3,
     }
+
     os.system('cls')
     game_mode = get_game_mode()
     run_game(game_mode, board)
@@ -31,7 +33,7 @@ def get_game_mode() -> int:
 
     while True:
         print("""
-Game modes:
+    Game modes:
 
     1. Play with Robot 
     2. Play with Each Other 
@@ -51,7 +53,7 @@ Game modes:
 
 
 def run_game(game_mode, board):
-    if game_mode == 'single':  # TODO 3. Change single to 1
+    if game_mode == 1:
         user_turn, os_turn = set_turn()
     else:
         user_turn, os_turn = 'X', 'O'
@@ -60,7 +62,7 @@ def run_game(game_mode, board):
     for step in range(1, 10):
         show_board(board)
 
-        if game_mode == 'single':
+        if game_mode == 1:
             run_robot(turn, user_turn, os_turn, board)
 
         else:
@@ -161,7 +163,7 @@ def check_end_game(step, game_mode, turn, os_turn, board):
         win_mode.extend(find_out_win_mode(turn, board))
         show_board(board)
         if result:
-            if game_mode == 'single':
+            if game_mode == 1:
                 print(
                     f"{colored('robot is won', 'blue', attrs=['bold'])}"
                     if turn == os_turn else f"{colored('user is won', 'blue', attrs=['bold'])}"
@@ -174,7 +176,7 @@ def check_end_game(step, game_mode, turn, os_turn, board):
         return True
 
 
-def end_game(step, board):
+def end_game(step, board):  # TODO 3. Change conditions
     if step >= 5:
         if board[1] == board[2] == board[3]:
             return True
