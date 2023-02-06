@@ -4,11 +4,6 @@ from termcolor import colored
 import os
 import time
 
-MODES = (
-    (1, 2, 3), (1, 4, 7), (1, 5, 9), (2, 5, 8),
-    (3, 6, 9), (3, 5, 7), (4, 5, 6), (7, 8, 9),
-)
-
 
 def start():
     # TODO 0. Update
@@ -57,20 +52,23 @@ def run_game(game_mode, board):
 
     turn = user_turn
     win_comb = []
+    win_combs = (
+        (1, 2, 3), (1, 4, 7), (1, 5, 9), (2, 5, 8), (3, 6, 9), (3, 5, 7), (4, 5, 6), (7, 8, 9),
+    )
     colors = {'X': 'red', 'O': 'green'}
 
     for step in range(1, 10):
         show_board(win_comb, board)
 
         if game_mode == 1 and turn == os_turn:
-            os_number = run_robot(user_turn, os_turn, board)
+            os_number = run_robot(user_turn, os_turn, win_combs, board)
             board[os_number] = turn
 
         else:
             user_number = get_user_number(turn, colors, board)
             board[user_number] = turn
 
-        if check_end_game(step, game_mode, turn, os_turn, win_comb, colors, board):
+        if check_end_game(step, game_mode, turn, os_turn, win_comb, win_combs, colors, board):
             break
 
         turn = os_turn if turn == user_turn else user_turn
@@ -114,14 +112,14 @@ def show_board(win_comb, board):
             print()
 
 
-def run_robot(user_turn, os_turn, board) -> int:
+def run_robot(user_turn, os_turn, win_combs, board) -> int:
     """ Find the best location for Robot """
 
     print('\n    Robot is Thinking...')
     time.sleep(3)
 
-    for element in (os_turn, user_turn):
-        os_number = try_win_self_or_lose_user(element, board)
+    for item in (os_turn, user_turn):
+        os_number = try_win_self_or_lose_user(item, win_combs, board)
 
         if os_number:
             return os_number
@@ -141,11 +139,11 @@ def get_user_number(turn, colors, board):
             print('Please Enter the Number! (Min=1, Max=9)')
 
 
-def try_win_self_or_lose_user(element, board):
-    movements = list(filter(lambda number: board[number] == element, board))
+def try_win_self_or_lose_user(item, win_combs, board):
+    movements = list(filter(lambda number: board[number] == item, board))
 
     if len(movements) >= 2:
-        for mode in MODES:
+        for mode in win_combs:
             temp_list = list(filter(lambda number: number in mode, movements))
 
             if len(temp_list) == 2:
@@ -163,10 +161,10 @@ def set_random_number(board):
             return random_number
 
 
-def check_end_game(step, game_mode, turn, os_turn, win_comb, colors, board):
+def check_end_game(step, game_mode, turn, os_turn, win_comb, win_combs, colors, board):
     result = end_game(step, board)
     if result in [True, False]:
-        win_comb.extend(find_out_win_comb(turn, board))
+        win_comb.extend(find_out_win_comb(turn, win_combs, board))
         show_board(win_comb, board)
         if result:
             if game_mode == 1:
@@ -204,8 +202,8 @@ def end_game(step, board):  # TODO 3. Change conditions
             return False
 
 
-def find_out_win_comb(turn, board):
-    for mode in MODES:
+def find_out_win_comb(turn, win_combs, board):
+    for mode in win_combs:
         if len(list(filter(lambda x: board[x] == turn, mode))) == 3:
             return mode
     return []
