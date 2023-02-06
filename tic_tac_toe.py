@@ -10,7 +10,6 @@ MODES = (
     (3, 6, 9), (3, 5, 7), (4, 5, 6), (7, 8, 9),
 )
 COLOR = {'X': 'red', 'O': 'green'}
-win_mode = list()
 
 
 def start():
@@ -57,10 +56,12 @@ def run_game(game_mode, board):
         user_turn, os_turn = set_turn()
     else:
         user_turn, os_turn = 'X', 'O'
+
     turn = user_turn
+    win_comb = []
 
     for step in range(1, 10):
-        show_board(board)
+        show_board(win_comb, board)
 
         if game_mode == 1:
             run_robot(turn, user_turn, os_turn, board)
@@ -69,7 +70,7 @@ def run_game(game_mode, board):
             user_number = get_user_number(turn, board)
             board[user_number] = turn
 
-        if check_end_game(step, game_mode, turn, os_turn, board):
+        if check_end_game(step, game_mode, turn, os_turn, win_comb, board):
             break
 
         turn = os_turn if turn == user_turn else user_turn
@@ -88,10 +89,10 @@ def set_turn():
         print('Invalid input! Please Try Again.')
 
 
-def show_board(board):
+def show_board(win_comb, board):
     os.system('cls')
     for number in board:
-        if number in win_mode:  # TODO 1. Using index of list items
+        if number in win_comb:
             text_color = 'blue'
         elif board[number] == 'X':
             text_color = 'red'
@@ -157,11 +158,11 @@ def set_random_number(board):
             return random_number
 
 
-def check_end_game(step, game_mode, turn, os_turn, board):
+def check_end_game(step, game_mode, turn, os_turn, win_comb, board):
     result = end_game(step, board)
     if result in [True, False]:
-        win_mode.extend(find_out_win_mode(turn, board))
-        show_board(board)
+        win_comb.extend(find_out_win_comb(turn, board))
+        show_board(win_comb, board)
         if result:
             if game_mode == 1:
                 print(
@@ -198,7 +199,7 @@ def end_game(step, board):  # TODO 3. Change conditions
             return False
 
 
-def find_out_win_mode(turn, board):
+def find_out_win_comb(turn, board):
     for mode in MODES:
         if len(list(filter(lambda x: board[x] == turn, mode))) == 3:
             return mode
@@ -210,7 +211,6 @@ def ask_question():
         user_input = input('Play again? (yes/no): ')
         if user_input in ['yes', 'no']:
             if user_input == 'yes':
-                win_mode.clear()
                 return start()
             return
         print('Invalid input! Please Try again.')
