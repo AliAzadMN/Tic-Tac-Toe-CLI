@@ -19,7 +19,6 @@ def start():
         1: 1, 2: 2, 3: 3,
     }
 
-    os.system('cls')
     game_mode = get_game_mode()
     run_game(game_mode, board)
     ask_question()
@@ -29,6 +28,8 @@ def get_game_mode() -> int:
     """ Get game mode from user """
 
     while True:
+        os.system('cls')
+
         print("""
     Game modes:
 
@@ -41,12 +42,11 @@ def get_game_mode() -> int:
 
             if game_mode in [1, 2]:
                 return game_mode
-            print('Please Enter Number [1,2]')
+            print(colored('\n    Please Enter Number [1,2]', 'red'))
 
         except ValueError:
-            print('Invalid input! Please Try Again.')
-
-        print()
+            print(colored('\n    Invalid input! Please Try Again.', 'red'))
+        time.sleep(2)
 
 
 def run_game(game_mode, board):
@@ -76,17 +76,25 @@ def run_game(game_mode, board):
         turn = os_turn if turn == user_turn else user_turn
 
 
-def set_turn():
+def set_turn() -> tuple:
+    """ Determine turn by user """
+
     while True:
+        time.sleep(2)
+        os.system('cls')
+
         print(
-            f"\nStart With {colored('X', 'red', attrs=['bold'])} or {colored('O', 'green', attrs=['bold'])}? ", end=''
+            f"\n    Start with {colored('X', 'red', attrs=['bold'])} or {colored('O', 'green', attrs=['bold'])}? ",
+            end=''
         )
-        user_turn = input()
-        user_turn = user_turn.upper()
+
+        user_turn = input().upper()
+
         if user_turn in ['X', 'O']:
             os_turn = 'O' if user_turn == 'X' else 'X'
             return user_turn, os_turn
-        print('Invalid input! Please Try Again.')
+
+        print(colored('\n    Invalid input! Please Try Again.', 'red'))
 
 
 def show_board(win_comb, board):
