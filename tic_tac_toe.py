@@ -154,9 +154,12 @@ def try_win_self_or_lose_user(item, win_combs, board):
                     return os_number
 
 
-def set_random_number(board):
+def set_random_number(board) -> int:
+    """ In conditions the cell is empty, return the location of it """
+
     while True:
         random_number = randint(1, 9)
+
         if type(board[random_number]) == int:
             return random_number
 
