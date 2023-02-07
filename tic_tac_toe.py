@@ -118,8 +118,8 @@ def run_robot(user_turn, os_turn, win_combs, board) -> int:
     print('\n    Robot is Thinking...')
     time.sleep(3)
 
-    for item in (os_turn, user_turn):
-        os_number = try_win_self_or_lose_user(item, win_combs, board)
+    for turn in (os_turn, user_turn):
+        os_number = check_availabe_condition(turn, win_combs, board)
 
         if os_number:
             return os_number
@@ -139,16 +139,27 @@ def get_user_number(turn, colors, board):
             print('Please Enter the Number! (Min=1, Max=9)')
 
 
-def try_win_self_or_lose_user(item, win_combs, board):
-    movements = list(filter(lambda number: board[number] == item, board))
+def check_availabe_condition(turn, win_combs, board) -> int or None:
+    """
+    Try to win or don't allow to user that win
 
-    if len(movements) >= 2:
-        for mode in win_combs:
-            temp_list = list(filter(lambda number: number in mode, movements))
+    1. obtain location of all cells that belong to Robot or User
+    2. if location of two cells (belong to Robot or User) was in any of winning combination
+    3. if the third cell is empty, return the location of it
+    """
 
-            if len(temp_list) == 2:
-                empty_position = list(filter(lambda number: number not in temp_list, mode))
-                os_number = empty_position[0]
+    # Location of any cells belong to Robot or User
+    locations = list(filter(lambda number: board[number] == turn, board))
+
+    if len(locations) >= 2:
+
+        for comb in win_combs:  # comb -> A winning combination
+            location_of_two_cells = list(filter(lambda number: number in comb, locations))
+
+            if len(location_of_two_cells) == 2:
+
+                # Find the third cell
+                os_number = list(filter(lambda number: number not in location_of_two_cells, comb))[0]
 
                 if type(board[os_number]) == int:
                     return os_number
@@ -193,9 +204,9 @@ def check_end_game(turn, win_combs, board) -> bool or None:
 
 
 def find_out_win_comb(turn, win_combs, board):
-    for mode in win_combs:
-        if len(list(filter(lambda x: board[x] == turn, mode))) == 3:
-            return mode
+    for comb in win_combs:
+        if len(list(filter(lambda x: board[x] == turn, comb))) == 3:
+            return comb
     return []
 
 
