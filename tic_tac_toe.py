@@ -68,8 +68,14 @@ def run_game(game_mode, board):
             user_number = get_user_number(turn, colors, board)
             board[user_number] = turn
 
-        if end_game(step, game_mode, turn, os_turn, win_comb, win_combs, colors, board):
-            break
+        if step >= 5:
+            has_winner = check_end_game(turn, win_combs, board)
+
+            if has_winner or step == 9:
+                win_comb.extend(find_out_win_comb(turn, win_combs, board))
+                show_board(win_comb, board)
+                show_final_result(has_winner, game_mode, turn, os_turn, colors)
+                return
 
         turn = os_turn if turn == user_turn else user_turn
 
@@ -158,7 +164,7 @@ def check_availabe_condition(turn, win_combs, board) -> int or None:
 
             if len(location_of_two_cells) == 2:
 
-                # Find the third cell
+                # Find the location of third cell
                 os_number = list(filter(lambda number: number not in location_of_two_cells, comb))[0]
 
                 if type(board[os_number]) == int:
@@ -175,32 +181,29 @@ def set_random_number(board) -> int:
             return random_number
 
 
-def end_game(step, game_mode, turn, os_turn, win_comb, win_combs, colors, board):
-    if step >= 5:
-        result = check_end_game(turn, win_combs, board)
-        if result or step == 9:  # Check game winner or Tied
-            win_comb.extend(find_out_win_comb(turn, win_combs, board))
-            show_board(win_comb, board)
-            if result:
-                if game_mode == 1:
-                    print(
-                        f"{colored('robot is won', 'blue', attrs=['bold'])}"
-                        if turn == os_turn else f"{colored('user is won', 'blue', attrs=['bold'])}"
-                    )
-                else:
-                    print(colored(turn, colors[turn], attrs=['bold']), colored('is won', 'blue', attrs=['bold']))
-            else:
-                print(f"{colored('Tie', 'magenta')}")
-
-            return True
-
-
 def check_end_game(turn, win_combs, board) -> bool or None:
     """ Check the game has a winner or not """
 
     for comb in win_combs:
         if board[comb[0]] == board[comb[1]] == board[comb[2]] == turn:
             return True
+
+
+def show_final_result(has_winner, game_mode, turn, os_turn, colors) -> None:
+    """ Show the final result of the game """
+
+    if has_winner:
+
+        if game_mode == 1:
+            print(
+                f"{colored('robot is won', 'blue', attrs=['bold'])}"
+                if turn == os_turn else f"{colored('user is won', 'blue', attrs=['bold'])}"
+            )
+        else:
+            print(colored(turn, colors[turn], attrs=['bold']), colored('is won', 'blue', attrs=['bold']))
+
+    else:
+        print(f"{colored('Tie', 'magenta')}")
 
 
 def find_out_win_comb(turn, win_combs, board):
