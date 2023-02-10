@@ -54,7 +54,6 @@ def run_game(game_mode, board):
     win_combs = (
         (1, 2, 3), (1, 4, 7), (1, 5, 9), (2, 5, 8), (3, 6, 9), (3, 5, 7), (4, 5, 6), (7, 8, 9),
     )
-    colors = {'X': 'red', 'O': 'green'}
 
     for step in range(1, 10):
         show_board(board)
@@ -64,7 +63,7 @@ def run_game(game_mode, board):
             board[os_number] = turn
 
         else:
-            user_number = get_user_number(turn, colors, board)
+            user_number = get_user_number(turn, board)
             board[user_number] = turn
 
         if step >= 5:
@@ -72,7 +71,7 @@ def run_game(game_mode, board):
 
             if win_comb or step == 9:
                 show_board(board, win_comb)
-                show_final_result(win_comb, game_mode, turn, os_turn, colors)
+                show_final_result(win_comb, game_mode, turn, os_turn)
                 return
 
         turn = os_turn if turn == user_turn else user_turn
@@ -131,7 +130,8 @@ def run_robot(user_turn, os_turn, win_combs, board) -> int:
     return set_random_number(board)
 
 
-def get_user_number(turn, colors, board):
+def get_user_number(turn, board):
+    colors = {'X': 'red', 'O': 'green'}
     while True:
         try:
             print(f"{colored(turn, colors[turn], attrs=['bold'])} move? ", end='')
@@ -187,21 +187,21 @@ def find_winning_combination(turn, win_combs, board) -> tuple or None:
             return comb
 
 
-def show_final_result(has_winner, game_mode, turn, os_turn, colors) -> None:  # TODO 1. Update ...
+def show_final_result(has_winner, game_mode, turn, os_turn) -> None:
     """ Show the final result of the game """
 
     if has_winner:
 
         if game_mode == 1:
             print(
-                f"{colored('robot is won', 'blue', attrs=['bold'])}"
-                if turn == os_turn else f"{colored('user is won', 'blue', attrs=['bold'])}"
+                f"\n    {colored('Robot is won', 'blue', attrs=['bold'])}"
+                if turn == os_turn else f"\n    {colored('User is won', 'blue', attrs=['bold'])}"
             )
         else:
-            print(colored(turn, colors[turn], attrs=['bold']), colored('is won', 'blue', attrs=['bold']))
+            print(f"\n    {colored(f'{turn} is won', 'blue', attrs=['bold'])}")
 
     else:
-        print(f"{colored('Tie', 'magenta')}")
+        print(f"\n    {colored('Tied', 'magenta', attrs=['bold'])}")
 
 
 def ask_question():
