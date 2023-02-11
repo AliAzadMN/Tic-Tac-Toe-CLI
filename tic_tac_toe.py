@@ -5,8 +5,8 @@ import os
 import time
 
 
-def start():
-    # TODO 0. Update
+def start() -> None:
+    """ Start the game (: """
 
     board = {
         7: 7, 8: 8, 9: 9,
