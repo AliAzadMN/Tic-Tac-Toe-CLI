@@ -217,14 +217,18 @@ def show_final_result(has_winner, game_mode, turn, os_turn) -> None:
         print(f"\n    {colored('Tied', 'magenta', attrs=['bold'])}")
 
 
-def ask_question():
+def ask_question() -> None:
+    """ Ask questions from user to he/she wants play again or not"""
+
     while True:
-        user_input = input('Play again? (yes/no): ')
+        user_input = input('\n    Play Again? (Yes/No): ').lower()
+
         if user_input in ['yes', 'no']:
             if user_input == 'yes':
                 return start()
+
             return
-        print('Invalid input! Please Try again.')
+        print(colored('\n    Invalid input! Please Try again.', 'red'))
 
 
 if __name__ == "__main__":
