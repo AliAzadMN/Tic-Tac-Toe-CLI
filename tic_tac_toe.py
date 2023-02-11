@@ -109,7 +109,7 @@ def show_board(board, colors, win_comb=None) -> None:
         # if text_color = None -> it means that cell still is empty
         text_color = colors.get(board[number])  # None | red | green
 
-        if text_color and win_comb and number in win_comb:
+        if win_comb and number in win_comb:
             text_color = 'blue'
 
         space = '    ' if number % 3 == 1 else ''
