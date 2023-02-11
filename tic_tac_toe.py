@@ -44,16 +44,16 @@ def get_game_mode() -> int:
         time.sleep(2)
 
 
-def run_game(game_mode, board):
+def run_game(game_mode, board) -> None:
+    """ The main function of this code that handle most of the tasks """
+
     if game_mode == 1:
         user_turn, os_turn = set_turn()
     else:
         user_turn, os_turn = 'X', 'O'
 
     turn = user_turn
-    win_combs = (
-        (1, 2, 3), (1, 4, 7), (1, 5, 9), (2, 5, 8), (3, 6, 9), (3, 5, 7), (4, 5, 6), (7, 8, 9),
-    )
+    win_combs = ((1, 2, 3), (1, 4, 7), (1, 5, 9), (2, 5, 8), (3, 6, 9), (3, 5, 7), (4, 5, 6), (7, 8, 9), )
     colors = {'X': 'red', 'O': 'green'}
 
     for step in range(1, 10):
@@ -67,13 +67,12 @@ def run_game(game_mode, board):
             user_number = get_user_number(turn, colors, board)
             board[user_number] = turn
 
-        if step >= 5:
+        if step >= 5:  # the game should have at least 5 movements to recognize end game
             win_comb = find_winning_combination(turn, win_combs, board)
 
-            if win_comb or step == 9:
+            if win_comb or step == 9:  # check the game has a winner or tie
                 show_board(board, colors, win_comb)
-                show_final_result(win_comb, game_mode, turn, os_turn)
-                return
+                return show_final_result(win_comb, game_mode, turn, os_turn)
 
         turn = os_turn if turn == user_turn else user_turn
 
