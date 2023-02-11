@@ -118,7 +118,7 @@ def show_board(board, win_comb=None):
 def run_robot(user_turn, os_turn, win_combs, board) -> int:
     """ Find the best location for Robot """
 
-    print('\n    Robot is Thinking...')
+    print('\n    Robot is Thinking ...')
     time.sleep(3)
 
     for turn in (os_turn, user_turn):
@@ -130,17 +130,23 @@ def run_robot(user_turn, os_turn, win_combs, board) -> int:
     return set_random_number(board)
 
 
-def get_user_number(turn, board):
+def get_user_number(turn, board) -> int:
+    """ Get the location of the cell from the user """
+
     colors = {'X': 'red', 'O': 'green'}
+
     while True:
+
         try:
-            print(f"{colored(turn, colors[turn], attrs=['bold'])} move? ", end='')
+            print(f"\n    {colored(turn, colors[turn], attrs=['bold'])} Move? ", end='')
             user_number = int(input())
+
             if type(board[user_number]) == int:
                 return user_number
-            print('That place is alread filled.')
+            print(colored('\n    That place is alread filled.', 'red'))
+
         except (ValueError, KeyError):
-            print('Please Enter the Number! (Min=1, Max=9)')
+            print(colored('\n    Please Enter the Number! (Min=1, Max=9)', 'red'))
 
 
 def check_availabe_condition(turn, win_combs, board) -> int or None:
@@ -188,7 +194,12 @@ def find_winning_combination(turn, win_combs, board) -> tuple or None:
 
 
 def show_final_result(has_winner, game_mode, turn, os_turn) -> None:
-    """ Show the final result of the game """
+    """
+    Show the final result of the game
+
+    if the game has a winner -> has_winner = tuple
+    if the game be tied -> has_winner = None
+    """
 
     if has_winner:
 
