@@ -54,23 +54,24 @@ def run_game(game_mode, board):
     win_combs = (
         (1, 2, 3), (1, 4, 7), (1, 5, 9), (2, 5, 8), (3, 6, 9), (3, 5, 7), (4, 5, 6), (7, 8, 9),
     )
+    colors = {'X': 'red', 'O': 'green'}
 
     for step in range(1, 10):
-        show_board(board)
+        show_board(board, colors)
 
         if game_mode == 1 and turn == os_turn:
             os_number = run_robot(user_turn, os_turn, win_combs, board)
             board[os_number] = turn
 
         else:
-            user_number = get_user_number(turn, board)
+            user_number = get_user_number(turn, colors, board)
             board[user_number] = turn
 
         if step >= 5:
             win_comb = find_winning_combination(turn, win_combs, board)
 
             if win_comb or step == 9:
-                show_board(board, win_comb)
+                show_board(board, colors, win_comb)
                 show_final_result(win_comb, game_mode, turn, os_turn)
                 return
 
@@ -98,21 +99,25 @@ def set_turn() -> tuple:
         print(colored('\n    Invalid input! Please Try Again.', 'red'))
 
 
-def show_board(board, win_comb=None):
+def show_board(board, colors, win_comb=None) -> None:
+    """ Show board of the game with some colors """
+
     os.system('cls')
+    print()
+
     for number in board:
-        if win_comb and number in win_comb:
+
+        # if text_color = None -> it means that cell still is empty
+        text_color = colors.get(board[number])  # None | red | green
+
+        if text_color and win_comb and number in win_comb:
             text_color = 'blue'
-        elif board[number] == 'X':
-            text_color = 'red'
-        elif board[number] == 'O':
-            text_color = 'green'
-        else:
-            text_color = None
-        # TODO 2. ِDifferent forms(ways) of use colored in termcolor
-        print(colored(str(board[number]), text_color, attrs=['bold']), '' if number % 3 == 0 else '|', end='', sep='')
-        if number % 3 == 0:
-            print()
+
+        space = '    ' if number % 3 == 1 else ''
+        character = colored(str(board[number]), text_color, attrs=['bold'])
+        seprator = '' if number % 3 == 0 else '|'
+
+        print(space, character, seprator, end='\n' if number % 3 == 0 else '', sep='')
 
 
 def run_robot(user_turn, os_turn, win_combs, board) -> int:
@@ -130,10 +135,8 @@ def run_robot(user_turn, os_turn, win_combs, board) -> int:
     return set_random_number(board)
 
 
-def get_user_number(turn, board) -> int:
+def get_user_number(turn, colors, board) -> int:
     """ Get the location of the cell from the user """
-
-    colors = {'X': 'red', 'O': 'green'}
 
     while True:
 
